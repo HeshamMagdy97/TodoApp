@@ -32,7 +32,6 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # gem 'rack-cors'
 
 gem 'active_model_serializers', '~> 0.10.0'
-gem 'factory_girl'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.6'

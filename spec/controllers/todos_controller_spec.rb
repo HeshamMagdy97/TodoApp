@@ -24,106 +24,22 @@ require 'rails_helper'
 # `rails-controller-testing` gem.
 
 RSpec.describe TodosController, type: :controller do
+  describe 'GET /users/:user_id/todos' do
+    let!(:todos) { create_list(:todo, 10) }
+    let(:todo_id) { articles.first.id }
+    # make HTTP get request before each example
 
-  # This should return the minimal set of attributes required to create a valid
-  # Todo. As you add validations to Todo, be sure to
-  # adjust the attributes here as well.
-  let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
-  }
+    before { get :index, params: { user_id: 1.to_s } }
+    it 'returns articles' do
+      # Note `json` is a custom helper to parse JSON responses
+      result = JSON(response.body)
 
-  let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
-  }
+      expect(result).not_to be_empty
+      expect(result.size).to eq(10)
+    end
 
-  # This should return the minimal set of values that should be in the session
-  # in order to pass any filters (e.g. authentication) defined in
-  # TodosController. Be sure to keep this updated too.
-  let(:valid_session) { {} }
-
-  describe "GET #index" do
-    it "returns a success response" do
-      todo = Todo.create! valid_attributes
-      get :index, params: {}, session: valid_session
-      expect(response).to be_successful
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
     end
   end
-
-  describe "GET #show" do
-    it "returns a success response" do
-      todo = Todo.create! valid_attributes
-      get :show, params: {id: todo.to_param}, session: valid_session
-      expect(response).to be_successful
-    end
-  end
-
-  describe "POST #create" do
-    context "with valid params" do
-      it "creates a new Todo" do
-        expect {
-          post :create, params: {todo: valid_attributes}, session: valid_session
-        }.to change(Todo, :count).by(1)
-      end
-
-      it "renders a JSON response with the new todo" do
-
-        post :create, params: {todo: valid_attributes}, session: valid_session
-        expect(response).to have_http_status(:created)
-        expect(response.content_type).to eq('application/json')
-        expect(response.location).to eq(todo_url(Todo.last))
-      end
-    end
-
-    context "with invalid params" do
-      it "renders a JSON response with errors for the new todo" do
-
-        post :create, params: {todo: invalid_attributes}, session: valid_session
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
-      end
-    end
-  end
-
-  describe "PUT #update" do
-    context "with valid params" do
-      let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
-      }
-
-      it "updates the requested todo" do
-        todo = Todo.create! valid_attributes
-        put :update, params: {id: todo.to_param, todo: new_attributes}, session: valid_session
-        todo.reload
-        skip("Add assertions for updated state")
-      end
-
-      it "renders a JSON response with the todo" do
-        todo = Todo.create! valid_attributes
-
-        put :update, params: {id: todo.to_param, todo: valid_attributes}, session: valid_session
-        expect(response).to have_http_status(:ok)
-        expect(response.content_type).to eq('application/json')
-      end
-    end
-
-    context "with invalid params" do
-      it "renders a JSON response with errors for the todo" do
-        todo = Todo.create! valid_attributes
-
-        put :update, params: {id: todo.to_param, todo: invalid_attributes}, session: valid_session
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
-      end
-    end
-  end
-
-  describe "DELETE #destroy" do
-    it "destroys the requested todo" do
-      todo = Todo.create! valid_attributes
-      expect {
-        delete :destroy, params: {id: todo.to_param}, session: valid_session
-      }.to change(Todo, :count).by(-1)
-    end
-  end
-
 end

@@ -8,5 +8,7 @@ Rails.application.routes.draw do
              controllers: {
                sessions: 'sessions'
              },defaults: {format: :json}
-
+  resources :users do
+    resources :todos
+  end
 end
