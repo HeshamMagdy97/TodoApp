@@ -8,7 +8,7 @@ Devise.setup do |config|
   # confirmation, reset password and unlock tokens in the database.
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
-  # config.secret_key = '08ee3439fc55eb75e1ca94b551666aa5e4d3230eb5b41ecb35459b32eaf72bf7a68a812764c4f1a4d82e0b3b93cb7b56b9f1fdc2965e52d3592fef6e9d90a494'
+  # config.secret_key = 'e3a0aa76a521c5217cabbe92835d475d4c45d1169dc50610d482d115e5af53656e4eaff68b210b7f8e7e78fa54a497e6cdd0df9039082f42c84766394f822997'
 
   # ==> Controller configuration
   # Configure the parent class to the devise controllers.
@@ -19,6 +19,7 @@ Devise.setup do |config|
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
   config.mailer_sender = 'please-change-me-at-config-initializers-devise@example.com'
+  config.navigational_formats = [:json]
 
   # Configure the class responsible to send e-mails.
   # config.mailer = 'Devise::Mailer'
@@ -114,7 +115,7 @@ Devise.setup do |config|
   config.stretches = Rails.env.test? ? 1 : 11
 
   # Set up a pepper to generate the hashed password.
-  # config.pepper = '305e1d58ceb9cf2ba49eba3dfd0c0ff4d565f842427820f8fcab69c9dcade269ea87862c5fa328e74969147e6584e4d3ec1ad5cc3ee4e749358d1a2323d7debc'
+  # config.pepper = 'c9ac935afe82f4e5a013d9f64680cab97fd5abe38fc020e5d588a8db2a460451abfb29285a22b717642512b346097d9c9e0b0dd5cf8cac843080ae3fa9c64b24'
 
   # Send a notification to the original email when the user's email is changed.
   # config.send_email_changed_notification = false
@@ -126,11 +127,8 @@ Devise.setup do |config|
   # A period that the user is allowed to access the website even without
   # confirming their account. For instance, if set to 2.days, the user will be
   # able to access the website for two days without confirming their account,
-  # access will be blocked just in the third day.
-  # You can also set it to nil, which will allow the user to access the website
-  # without confirming their account.
-  # Default is 0.days, meaning the user cannot access the website without
-  # confirming their account.
+  # access will be blocked just in the third day. Default is 0.days, meaning
+  # the user cannot access the website without confirming their account.
   # config.allow_unconfirmed_access_for = 2.days
 
   # A period that the user is allowed to confirm their account before their
@@ -186,6 +184,7 @@ Devise.setup do |config|
 
   # Defines which key will be used when locking and unlocking an account
   # config.unlock_keys = [:email]
+  config.navigational_formats = []
 
   # Defines which strategy will be used to unlock an account.
   # :email = Sends an unlock link to the user email
@@ -291,9 +290,15 @@ Devise.setup do |config|
   #   include Turbolinks::Controller
   # end
 
-  # ==> Configuration for :registerable
+  config.jwt do |jwt|
+    jwt.secret = Rails.application.secrets.jwt_secret
 
-  # When set to false, does not sign a user in automatically after their password is
-  # changed. Defaults to true, so a user is signed in automatically after changing a password.
-  # config.sign_in_after_change_password = true
+    jwt.dispatch_requests = [
+      ['POST', %r{^/login$}]
+    ]
+    jwt.revocation_requests = [
+      ['DELETE', %r{^/logout$}]
+    ]
+    jwt.expiration_time = 1.day.to_i
+  end
 end
