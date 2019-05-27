@@ -1,6 +1,6 @@
 class TodosController < ApplicationController
   before_action :authenticate_user! 
-  before_action :authrize_user, except: [:create, :index, :show]
+  before_action :authrize_user, except: [:create]
   # GET /todos
   def index
     @todos = Todo.user_todos current_user
@@ -9,7 +9,7 @@ class TodosController < ApplicationController
 
   # GET /todos/1
   def show
-    render json: @todo
+    render json: todo
   end
 
   # POST /todos
