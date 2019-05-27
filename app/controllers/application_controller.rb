@@ -1,26 +1,9 @@
 class ApplicationController < ActionController::API
   respond_to :json
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
-  def render_resource(resource, status)
-    if resource.errors.empty?
-      render json: resource, status: status
-    else
-      validation_error(resource)
-    end
+  def record_not_found
+    render json: { messages: ['you dont have the permission'], errors: ['auth'] },
+                  status: :not_found
   end
-
-  def validation_error(resource)
-    render json: {
-      errors: [
-        {
-          status: '400',
-          title: 'Bad Request',
-          detail: resource.errors,
-          code: '100'
-        }
-      ]
-    }, status: :bad_request
-  end
-
-
 end
