@@ -16,22 +16,14 @@ class TodosController < ApplicationController
   def create
     @todo = Todo.new(todo_params)
     @todo.user = current_user
-    if @todo.save
-      render json: { messages: ['created'], todo: @todo },
-                     status: :created
-    else
-      render json: { messages: ['error'], errors: @todo.errors },
-                     status: :unprocessable_entity
-    end
+    @todo.save!
+    render json: { messages: ['created'], todo: @todo },
+                  status: :created
   end
 
   # PATCH/PUT /todos/1
   def update
-    if @todo.update(todo_params)
-      render json: @todo
-    else
-      render json: @todo.errors, status: :unprocessable_entity
-    end
+    @todo.update!(todo_params)
   end
 
   # DELETE /todos/1
@@ -43,7 +35,7 @@ class TodosController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def todo
-    @todo || Todo.find(params[:id])
+    @todo ||= Todo.find(params[:id])
   end
 
   def todo_policy
